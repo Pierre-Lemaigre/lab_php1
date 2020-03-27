@@ -43,20 +43,25 @@ print '<p></p>';
 function calculateWordsStats($url)
 {
   $stats_words = [];
-  $content_filtered = file_get_contents($url);
-  $words = explode(" ", $content_filtered);
+  $content = file_get_contents($url);
+  $words = explode(" ", $content);
   foreach($words as $word) {
-    trim($word);
-    if ($stats_words[$word]) {
-      $stats_words[$word] += 1;
-    } else {
-      $stats_words[$word] = 1;
+    $trimmed = trim($word);
+    if (strlen($trimmed) == 0) {
+      continue;
     }
+    if (!isset($stats_words[$trimmed])) {
+      $stats_words[$trimmed] = 0;
+    }
+    $stats_words[$trimmed] += 1;
   }
   arsort($stats_words);
   $most_word = array_slice($stats_words, 0, 10, true);
-  print_r($most_word);
+  echo "<ul>";
+  foreach($most_word as $word => $apparations) {
+    echo "<li>" . $word . " - " .  $apparations . "</li>";
+  }
+  echo "</ul>";
 }
 
 calculateWordsStats("http://www.gutenberg.org/files/1321/1321-0.txt");
-?>
